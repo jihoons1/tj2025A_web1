@@ -108,5 +108,5 @@ public class BoardDao extends Dao {
             System.out.println(e);
         }
         return false;
-    }// asdasdasdasdasd144
+    }
 }
