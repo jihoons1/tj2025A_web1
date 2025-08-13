@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 // assessment db
 @Repository
@@ -39,7 +40,7 @@ public class ShoppingDao extends Dao{
         List<ShoppingoneDto> list = new ArrayList<>();
         System.out.println("ShoppingDao.shoppingPrint");
         try{
-            String sql = "select * from MEMBER_TBL_02";
+            String sql = "select * from MEMBER_TBL_02 ";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
@@ -50,7 +51,10 @@ public class ShoppingDao extends Dao{
                 String joindate = rs.getString("joindate");
                 String grade = rs.getString("grade");
                 String city = rs.getString("city");
-                ShoppingoneDto dto = new ShoppingoneDto(custno,custname,phone,address,joindate,grade,city);
+
+                Map<String, String> gradeMap = Map.of("A","VIP","B","일반","C","직원"); // GPT 참고..
+                String graderank = gradeMap.get(grade); // GPT 참고..
+                ShoppingoneDto dto = new ShoppingoneDto(custno,custname,phone,address,joindate,graderank,city);
                 list.add(dto);
             }
         }catch (Exception e){

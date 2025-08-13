@@ -14,7 +14,7 @@
     <div>
         <ul>
             <li><a href="/assessment/add.jsp" > 회원등록 </a></li>
-            <li><a href="#" > 회원목록조회 </a></li>
+            <li><a href="/assessment/print.jsp" > 회원목록조회 </a></li>
             <li><a href="#" > 회원매출조회 </a></li>
             <li><a href="/assessment/main.jsp" > 홈으로 </a></li>
         </ul>

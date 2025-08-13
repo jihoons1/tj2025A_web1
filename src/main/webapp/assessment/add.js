@@ -1,7 +1,5 @@
+document.querySelector('.joindate').value = new Date().toISOString().slice(0,10); // GPT 참고.. 
 
-window.addEventListener('DOMContentLoaded', () => {
-  document.querySelector('.joindate').value = new Date().toISOString().slice(0,10);
-});
 
 const add = async () => {
     const custname = document.querySelector('.custname').value;

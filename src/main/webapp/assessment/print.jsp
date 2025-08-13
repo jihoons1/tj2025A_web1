@@ -11,7 +11,7 @@
 </head>
 <body>
     <jsp:include page="/assessment/main.jsp"></jsp:include>
-    <div> 회원목록조회/수정 </div>
+    <div> <h2>회원목록조회/수정 </h2> </div>
 
     <div>
         <table border="1">
