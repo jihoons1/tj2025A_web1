@@ -55,4 +55,10 @@ public class MemberService {
         return result;
     }
 
+    // [9] 아이디 찾기
+    public String infoid(MemberDto dto){
+        String result = memberDao.infoid(dto.getMname() , dto.getMphone());
+        return result;
+    }
+
 }

@@ -139,5 +139,25 @@ public class MemberDao extends Dao { // JDBC 연동 상속받기
         return false;
     }
 
+    // [9] 아이디 찾기
+
+    public String infoid( String mname, String mphone){
+        try{
+            String sql = "select mid from member where mname =? and mphone = ? " ;
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1,mname);
+            ps.setString(2,mphone);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                return rs.getString("mid");
+            }
+            return null;
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return null;
+    }
+
+
 
 } // class end

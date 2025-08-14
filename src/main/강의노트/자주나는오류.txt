@@ -16,3 +16,14 @@
     1. **JAVA는 키워드 오류 바로 발생**
     2. **JS는 키워드 오류 바로 발생:CONSOLE확인**
     _update() {} vs boardUpdate()
+
+6) 프론트엔드에서 경로 설정 , / 슬래시 주의
+    1.  jsp/css/js : webwapp 또는 static 이하 경로부터 시작
+        [0] <jsp:include page="http://localhost:8080/header.jsp"><jsp:include>
+        [0] <jsp:include page="/header.jsp"><jsp:include>
+        [X] <jsp:include page="header.jsp"><jsp:include>
+
+    2. fetch : controller 경로 확인
+        [0] fetch( "http://localhost:8080/member/login" )
+        [0] fetch( "/member/login" )
+        [0] fetch( "member/login" )
