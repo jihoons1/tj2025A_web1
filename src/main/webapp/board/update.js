@@ -7,7 +7,7 @@ const boardFind = async () => {
     // 2. fetch 이용한 bno의 게시물정보 요청
     const response = await fetch( `/board/a?bno=${bno}` );
     const data = await response.json();
-    // 3. 현재 게시물의 수저하기 전 게시물 내용 출력
+    // 3. 현재 게시물의 수정하기 전 게시물 내용 출력
     document.querySelector('.bcontent').innerHTML = data.bcontent;
 }
 boardFind(); // js 실행시 1번 실행 < 버튼 없으므로 >

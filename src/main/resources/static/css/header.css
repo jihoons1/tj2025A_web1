@@ -2,7 +2,9 @@
 #header{
     display: flex;
     justify-content: space-between;
+    
 }
+
 
 #header > #sub-menu{
     display: flex;
