@@ -129,16 +129,16 @@ public class MemberController {
         if( result == true )  session.removeAttribute("loginMno");
         return result;
     }
-
+    @GetMapping("/infoid")
     // [9] 아이디 찾기
-    @PostMapping("/info/id")
-    public String infoid(@RequestBody MemberDto dto){
-        String result = memberService.infoid(dto);
-        if (result != null) { return result; }
-        else  {
-            return null;}
+    public Map<String ,String> infoid(@RequestParam Map<String ,String> map) {
+        return memberService.infoid(map);
     }
-
+    @GetMapping("/infopass")
+    // 비번 찾기
+    public Map<String ,String> infopass(@RequestParam Map<String ,String> map) {
+        return memberService.infopass(map);
+    }
     // [10] 비밀번호 찾기
 
 

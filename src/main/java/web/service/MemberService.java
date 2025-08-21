@@ -6,7 +6,9 @@ import web.model.dao.MemberDao;
 import web.model.dto.MemberDto;
 
 import java.lang.reflect.Member;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @Service // 스프링 컨테이너(메모리) 빈(객체) 등록
 public class MemberService {
@@ -56,9 +58,36 @@ public class MemberService {
     }
 
     // [9] 아이디 찾기
-    public String infoid(MemberDto dto){
-        String result = memberDao.infoid(dto.getMname() , dto.getMphone());
-        return result;
+    public Map<String ,String> infoid(Map<String ,String> map){
+        String result = memberDao.infoid(map);
+        Map<String , String> maps = new HashMap<>();
+        if (result == null) {
+            maps.put("msg" , null);
+        }else {
+            maps.put("msg" , result);
+        }
+        return maps;
+    }
+
+    public Map<String , String > infopass( Map<String ,String > map){
+        // 1. 컨트롤러로 부터 사용자에게 입력받은 아이디와 연락처를 매개변수로 받아
+        // ***** 유호성 검사 , 추가적인 이벤트 *********
+        // * 난수 생성 , 간단하게 0~9 사이의 6 자리 난ㅅ ㅜ생성 , 주의할점 : 문자열 타입 , 숫자는 앞에 6035
+        String mpwd = "";
+        for ( int i = 1 ; i<= 6; i++){ // 6 회전
+            Random random = new Random();
+            mpwd += random.nextInt(10); // 0~9 까지의 난수 생성
+        }
+        map.put("mpwd" , mpwd ); // 생성된 난수 비밀번호 map 속성 대입
+        // 2. 다오 에게 입력받은 매개변수를 전달하여 결과를 확인한다.
+        boolean result = memberDao.infopass(map);
+        // 3. 만ㅇ갸에 result 가 성공이면
+        Map<String , String > resultMap = new HashMap<>();
+        if (result == true) {
+            resultMap.put("msg", mpwd);
+        }else { resultMap.put("msg", "회원정보없음"); }
+        // 반환
+        return resultMap;
     }
 
 }

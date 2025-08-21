@@ -17,6 +17,7 @@
             <li> <a href="/datago/data.jsp"> 공공데이터 </a> </li>
             <li> <a href="/kakao/map.jsp"> 카카오지도 </a> </li>
             <li> <a href="/kakao/datamap.jsp"> 데이터지도 </a> </li>
+            <li> <a href="/yeonsu/map.jsp"> 데이터지도 </a> </li>
             <li> <a href="/product/create.jsp"> 제품등록 </a> </li>
             <li> <a href="/product/list.jsp"> 제품보기 </a> </li>
         </ul>

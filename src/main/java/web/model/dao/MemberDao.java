@@ -140,22 +140,37 @@ public class MemberDao extends Dao { // JDBC 연동 상속받기
     }
 
     // [9] 아이디 찾기
-
-    public String infoid( String mname, String mphone){
+    public String infoid( Map<String ,String > map){
         try{
             String sql = "select mid from member where mname =? and mphone = ? " ;
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1,mname);
-            ps.setString(2,mphone);
+            ps.setString(1,map.get("mname"));
+            ps.setString(2,map.get("mphone"));
             ResultSet rs = ps.executeQuery();
-            while (rs.next()){
+            if (rs.next()) {
                 return rs.getString("mid");
             }
-            return null;
         }catch (Exception e){
             System.out.println(e);
         }
         return null;
+    }
+
+    // [10] 비밀번호 찾기
+
+    public boolean infopass( Map<String , String > map){
+        try{
+            String sql = "update member set mpwd = ? where mid =? and mphone = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, "mpwd");
+            ps.setString(2, "mid");
+            ps.setString(3, "mphone");
+            int count = ps.executeUpdate();
+            return count==1;
+        }catch (Exception e){
+            System.out.println(e+"비밀번호 찾기 문제");
+        }return false;
+
     }
 
 

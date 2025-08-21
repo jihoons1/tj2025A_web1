@@ -10,10 +10,11 @@
     <link rel='stylesheet' href='/css/member/infoid.css'>
 </head>
 <body>
-    <jsp:incldue page="/header.jsp"></jsp:incldue>
+    <jsp:include page="/header.jsp"></jsp:include>
 
     <div id="idd">
         <h3> 아이디 찾기 </h3>
+        id <input class="mid" > 
         이름 : <input class="mname"> 
         연락처 : <input class="mphone">
         <button type="button" onclick="infoid()"> 아이디 찾기 </button>

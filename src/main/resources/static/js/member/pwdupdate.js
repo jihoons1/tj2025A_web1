@@ -15,7 +15,7 @@ const onPwdUpdate = async()=>{
         body : JSON.stringify(obj),
     }
     console.log(op);
-    const response = await fetch("/member/update/password" , op);
+    const response = await fetch("/member/infopass" , op);
     const data = await response.json();
     console.log(data);
 
