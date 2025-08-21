@@ -20,7 +20,9 @@
             -> Spring 프로젝트에서는 resources 폴더에서 찾는다. JSP는 webapp 폴더 에서 찾는다*
 
         2] CONTROLLER : @RestController @Controller
-            -> 역할 : HTTP 통신(요청/응답) , 매개변수/반환 타입 관리 변환 , VIEW 와 SERVICE
+            -> 역할 : [주] HTTP 통신(요청/응답) , 매개변수/반환 타입 관리 변환 , VIEW 와 SERVICE
+            -> 사용자/클라이언트 1번의 요청은 하나의 controller 위임
+
 
         3] SERVICE : @Service
             -> 역할 : 비지니스로직( 기능에 있어서 실질적인 중요코드)
