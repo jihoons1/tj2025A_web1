@@ -1,17 +1,19 @@
 package web.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import web.model.dao.PostDao;
 import web.model.dto.PageDto;
 import web.model.dto.PostDto;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor // 롬복제공 : final 변수에 대한 ---(final)생성자 자동-- 제공
 public class PostService {
-    // (*) @RequiredArgsConstructor 사용시
+    // (*) @RequiredArgsConstructor 사용시 ( @Autowired 생략해도 자동으로 의존성이 처리된다 )
     private final PostDao postDao;
     // (*) @RequiredArgsConstructor 미사용시
     /*
@@ -21,11 +23,11 @@ public class PostService {
         this.postDao = postDao;
     }
     */
+
     // [1] 게시물등록
     public int writePost(PostDto postDto ){
         return postDao.writePost( postDto );
-    }
-
+    } // func end
 
     // [2] 게시물 전체조회 *페이징*
     public PageDto findAllPost( int cno , int page , int count , String key , String keyword  ){
@@ -86,4 +88,16 @@ public class PostService {
         return postDao.updatePost( postDto );
     }
 
-}
+    // [6]
+    public int writeReply(Map<String,String> reply ){
+        return postDao.writeReply( reply );
+    }
+
+    // [7]
+    public List< Map<String,String> > findAllReply( int pno ){
+        return postDao.findAllReply( pno );
+    }
+
+
+
+} // class end

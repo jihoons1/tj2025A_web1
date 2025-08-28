@@ -7,7 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class PostDao extends Dao {
@@ -41,15 +43,12 @@ public class PostDao extends Dao {
         return 0; // 조회 결과 없으면 0 반환
     } // func end
 
-
     // [2-2] 카테고리별 전체 게시물 정보 조회
-    public List<PostDto> findAll(int cno , int startRow , int count ){
+    public List<PostDto> findAll( int cno , int startRow , int count ){
         List<PostDto> list = new ArrayList<>();
-        try{ String sql = "select * from post p inner join member m " +
-                            " on p.mno = m.mno " +
-                            " where p.cno = ? " +
-                            " order by p.pno " +
-                            " desc limit ? , ?;";
+        try{ String sql = "SELECT * FROM post p INNER JOIN member m " +
+                " ON p.mno = m.mno WHERE p.cno = ?" +
+                " ORDER BY p.pno DESC LIMIT ? , ? ";
             PreparedStatement ps = conn.prepareStatement( sql );
             ps.setInt( 1 , cno );
             ps.setInt( 2 , startRow );
@@ -57,14 +56,11 @@ public class PostDao extends Dao {
             ResultSet rs = ps.executeQuery();
             while ( rs.next() ){
                 PostDto postDto = new PostDto();
-                postDto.setMno( rs.getInt("mno") );
-                postDto.setCno( rs.getInt("cno") );
-                postDto.setPcontent( rs.getString("pcontent"));
-                postDto.setPdate( rs.getString("pdate") );
-                postDto.setPview( rs.getInt("pview") );
-                postDto.setPtitle(rs.getString("ptitle"));
-                postDto.setPno( rs.getInt( "pno") );
-                postDto.setMid( rs.getString("mid")); // member 테이블과 join한 결과 mid 호출 가능하다.
+                postDto.setMno( rs.getInt("mno") );             postDto.setCno( rs.getInt("cno") );
+                postDto.setPcontent( rs.getString("pcontent")); postDto.setPdate( rs.getString("pdate") );
+                postDto.setPview( rs.getInt("pview") );         postDto.setPno( rs.getInt( "pno") );
+                postDto.setPtitle( rs.getString("ptitle"));
+                postDto.setMid( rs.getString( "mid" )); // member 테이블과 join한 결과 mid 호출 가능하다.
                 list.add( postDto );
             }
         } catch (Exception e) {  System.out.println(e);}
@@ -94,32 +90,26 @@ public class PostDao extends Dao {
     // [2-4] 카테고리별 *검색* 전체 게시물 정보 조회
     public List<PostDto> findAllSearch( int cno , int startRow , int count , String key , String keyword ){
         List<PostDto> list = new ArrayList<>();
-        try{
-
-            String sql = " select * from post p inner join member m on p.mno = m.mno where cno = ? ";
-            // ***** sql ****
-            if (key.equals("ptitle") ) { sql += " and ptitle like ? "; }
-            else if ( key.equals("pcontent") ) { sql += " and pcontent like ? "; }
+        try{ String sql = " select * from post p inner join member m on p.mno = m.mno where cno = ? ";
+            // **** 검색 SQL ****
+            if( key.equals("ptitle") ){ sql += " and ptitle like ? "; }
+            else if( key.equals("pcontent") ){ sql += " and pcontent like ? "; }
             // 그외(정렬/페이징)
-            sql += " order by pno desc limit ? , ?" ;
-            System.out.println(" 확인 sql "+ sql);
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, cno);
-            ps.setString(2, "%" + keyword + "%" );
-            ps.setInt(3, startRow );
-            ps.setInt(4,count);
+            sql += " order by pno desc limit ? , ? ";       System.out.println( "[확인]동적SQL : " + sql );
+            PreparedStatement ps = conn.prepareStatement( sql );
+            ps.setInt( 1 , cno );
+            ps.setString( 2 , "%" + keyword +"%" );
+            ps.setInt( 3 , startRow );           ps.setInt( 4 , count );
             ResultSet rs = ps.executeQuery();
-            while (rs.next() ){
+            while ( rs.next() ){
                 PostDto postDto = new PostDto();
-                postDto.setMno( rs.getInt("mno") ); postDto.setCno(rs.getInt("cno"));
-                postDto.setPcontent(rs.getString("pcontent")); postDto.setPdate(rs.getString("pdate"));
-                postDto.setPview(rs.getInt("pview"));   postDto.setPno(rs.getInt("pno"));
-                postDto.setPtitle(rs.getString("ptitle")); postDto.setMid(rs.getString("mid"));
-                list.add(postDto);
+                postDto.setMno( rs.getInt("mno") );             postDto.setCno( rs.getInt( "cno" ));
+                postDto.setPcontent( rs.getString("pcontent")); postDto.setPdate( rs.getString("pdate"));
+                postDto.setPview( rs.getInt("pview"));          postDto.setPno( rs.getInt("pno"));
+                postDto.setPtitle( rs.getString("ptitle"));     postDto.setMid( rs.getString("mid") );
+                list.add( postDto );
             }
-        }catch (Exception e){
-            System.out.println(e);
-        }
+        } catch (Exception e) { System.out.println( e ); }
         return list;
     }
 
@@ -173,4 +163,41 @@ public class PostDao extends Dao {
         } catch (Exception e) { System.out.println(e); }
         return 0;
     }
+
+    // [6]
+    public int writeReply( Map< String , String > reply ){
+        try{ String sql ="insert into reply( rcontent , mno , pno ) values( ? , ? , ? )";
+            PreparedStatement ps = conn.prepareStatement( sql , Statement.RETURN_GENERATED_KEYS );// PK값 반환 설정
+            ps.setString( 1 , reply.get( "rcontent") ); // { "속성명" : 속성값 , "속성명 : 속성값 }
+            ps.setString( 2 , reply.get( "mno" ) ); // map.get( "속성명") : 속성값 반환
+            ps.setString( 3 , reply.get( "pno" ) );
+            int count = ps.executeUpdate();
+            if( count == 1){
+                ResultSet rs = ps.getGeneratedKeys(); // insert 성공시 자동생성된 pk값들 반환
+                if( rs.next() ) return rs.getInt( 1 ); // pk값(댓글번호) 1개 반환
+            }
+        } catch (Exception e) { System.out.println(e); }
+        return 0;
+    }
+
+    // [7]
+    public List< Map<String,String> > findAllReply( int pno ){
+        List< Map<String,String> > list = new ArrayList<>();
+        try{ String sql ="select * from reply r inner join member m on r.mno = m.mno where pno=?";
+            PreparedStatement ps = conn.prepareStatement( sql );
+            ps.setInt( 1, pno );
+            ResultSet rs = ps.executeQuery();
+            while ( rs.next() ){
+                // { key : value , key : value , key : value }
+                Map<String,String> map = new HashMap<>();
+                map.put( "rcontent" , rs.getString("rcontent") );
+                map.put( "rdate" , rs.getString("rdate") );
+                map.put( "rno" , rs.getString("rno") );
+                map.put( "mid" , rs.getString("mid") );
+                list.add( map );
+            }
+        } catch (Exception e) { System.out.println(e); }
+        return list;
+    }
+
 } // class end

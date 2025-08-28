@@ -2,6 +2,7 @@ package web.controller;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import web.model.dto.PageDto;
 import web.model.dto.PostDto;
@@ -9,6 +10,7 @@ import web.service.PostService;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController // (1) HTTP 요청/응답 자료 매핑 기술
@@ -19,8 +21,8 @@ public class PostController {
     private final PostService postService; // @RequiredArgsConstructor 사용함으로 @Autowired 생략 한다.
 
     // [1] 게시물등록
-    @PostMapping("")
-    public int writePost(@RequestBody PostDto postDto , HttpSession session ){
+    @PostMapping("") // method : post , url : localhost:8080/post , body : { "ptitle" : "게시물제목테스트" , "pcontent" : "게시물제목테스트" , "cno" : "1"  }
+    public int writePost( @RequestBody PostDto postDto , HttpSession session ){
         // 1. 현재 로그인 상태 확인
         Object login = session.getAttribute("loginMno");
         // 2. 비로그인이면 등록 실패처리
@@ -34,23 +36,18 @@ public class PostController {
 
     // [2] 게시물 전체 조회
     @GetMapping("")
-    // method : GET , URL : localhost:8080/post?cno=1&page=1&count=5  1번카테고리(뉴스)의 1페이지의 5개 게시물
-    // method : GET , URL : localhost:8080/post?cno=1&page=2&count=10  2번카테고리(뉴스)의 2페이지의 10개 게시물
-    // http://localhost:8080/post?cno=1&page=1&count=5
-    // 검색이 있을때 : method : GET , URL : localhost:8080/post?cno=1&page=1&count=5  1번카테고리(뉴스)의 1페이지의 5개 게시물
-    // 검색이 없을떄 : method : GET , URL : localhost:8080/post?cno=1&page=1&count=5&key=ptitle&keyword=ai ,   1번카테고리(뉴스)의 1페이지의 5개 게시물
-    public PageDto findAllPost(
-            @RequestParam( defaultValue = "1") int cno ,
-            @RequestParam( defaultValue = "1") int page ,
-            @RequestParam( defaultValue = "5") int count ,
-            @RequestParam( required = false) String key ,
-            @RequestParam( required = false) String keyword ) { // defaultValue : 값 생략시 기본값 대입
-        // 만약에 URL 주소상의 쿼리스트링 매개변수가 없으면 defaultValue 속성으로 기본값 대입할 수 있다.
-        // 만약에 URL 주소상의 쿼리스트링 매개변수가 존재하는 조건이 필수가 아닐때 required = false 속성을 사용한다.
-        return postService.findAllPost(cno,page,count , key , keyword);
-
-
+    // 검색이 없을떄 : method : GET , URL : http://localhost:8080/post?cno=1&page=1&count=5 , 1번카테고리(뉴스)의 1페이지의 5개 게시물
+    // 검색이 있을떄 : method : GET , URL : http://localhost:8080/post?cno=1&page=1&count=5&key=ptitle&keyword=ai , 1번카테고리(뉴스)의 1페이지에서 제목의 ai가 포함된  5개 게시물
+    public PageDto findAllPost( @RequestParam( defaultValue = "1") int cno ,
+                                @RequestParam( defaultValue = "1") int page ,
+                                @RequestParam( defaultValue = "5" ) int count ,
+                                @RequestParam( required = false ) String key ,
+                                @RequestParam( required = false ) String keyword ){
+        // 만약에 URL 주소상의 지정한 쿼리스트링 매개변수가 없으면 defaultValue 속성으로 기본값 대입 할 수 있다.
+        // 만약에 URL 주소상의 지정한 쿼리스트링 매개변수가 존재하는 조건이 필수가 아닐때 required = false 속성을 사용한다.
+        return postService.findAllPost( cno , page , count , key , keyword );
     }
+
     // [3] 게시물 개별 정보 조회
     @GetMapping("/view")
     public PostDto getPost( @RequestParam int pno , HttpSession session ){
@@ -100,5 +97,22 @@ public class PostController {
         return postService.updatePost( postDto );
     }
 
+    // [6]
+    @PostMapping("/reply")
+    public int writeReply( @RequestBody Map<String,String> reply , HttpSession session ){
+        // * 회원제 댓글 이라서 *세션* 내 로그인정보 가져오기
+        if( session.getAttribute("loginMno") == null ) return 0; // 비로그인이면 실패
+
+        int loginMno = (int)session.getAttribute("loginMno"); // 로그인중이면 세션에서 회원번호 조회
+        reply.put( "mno" ,  loginMno+""  ); // ?? +"" , 로그인된 회원번호를 map 추가
+
+        return postService.writeReply( reply );
+    }
+
+    // [7]
+    @GetMapping("/reply")
+    public List< Map<String,String> > findAllReply( @RequestParam int pno ){
+        return postService.findAllReply( pno );
+    }
 
 } // class end

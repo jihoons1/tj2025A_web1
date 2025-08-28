@@ -1,3 +1,4 @@
+
 // [*] 썸머노트 실행
 // $ : jquery( JS확장 라이브러리) 문법 , 
 $(document).ready(function() {
